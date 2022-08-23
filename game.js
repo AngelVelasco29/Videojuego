@@ -28,12 +28,12 @@ const startGame = () => {
       game.fillText(emoji, posX, posY);
     }
   });
-    // row.forEach((col, colIndex) => {
-    //   const emoji = emojis[col];
-    //   const posX = elementsSize * (colIndex + 1) + 5;
-    //   const posY = elementsSize * (rowIndex + 1) - 10;
-    //   game.fillText(emoji, posX, posY);
-    // });
+  // row.forEach((col, colIndex) => {
+  //   const emoji = emojis[col];
+  //   const posX = elementsSize * (colIndex + 1) + 5;
+  //   const posY = elementsSize * (rowIndex + 1) - 10;
+  //   game.fillText(emoji, posX, posY);
+  // });
 
   // for (let row = 1; row <= 10; row++) {
   //   for (let col = 1; col <= 10; col++) {
@@ -48,4 +48,29 @@ const startGame = () => {
   // game.textAlign= 'center'
   // game.fillText('Platzi',0,25)
 };
+
+const move = (key) => {
+  if(typeof key === 'object'){
+    key= key.key;
+  };
+  switch (key) {
+    case "ArrowUp":
+      console.log("Arriba");
+      break;
+    case "ArrowLeft":
+      console.log("Izquierda");
+      break;
+    case "ArrowRight":
+      console.log("Derecha");
+      break;
+    case "ArrowDown":
+      console.log("Abajo");
+      break;
+
+    default:
+      break;
+  }
+};
+
+window.addEventListener("keydown", move);
 window.addEventListener("load", startGame);
