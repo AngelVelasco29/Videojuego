@@ -6,11 +6,28 @@ const playerPosition = {
   x: undefined,
   y: undefined,
 };
+
+const giftPosition = {
+  x: undefined,
+  y: undefined,
+};
 let mapRows = [];
+
 const movePlayer = () => {
   game.clearRect(0, 0, canvasSize, canvasSize);
   drawMap();
   game.fillText(emojis["PLAYER"], playerPosition.x, playerPosition.y);
+  const giftColisionX =
+    playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
+  const giftColisionY =
+    playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
+  const giftColision = playerPosition.x
+    ? giftColisionX && giftColisionY
+    : false;
+  console.log(giftColision);
+  if (giftColision) {
+    console.log("nuevo nivel");
+  }
 };
 
 const drawMap = () => {
@@ -24,6 +41,10 @@ const drawMap = () => {
       if (row[col] == "O" && !playerPosition.x) {
         playerPosition.x = posX;
         playerPosition.y = posY;
+      }
+      if (row[col] == "I" && !giftPosition.x) {
+        giftPosition.x = posX;
+        giftPosition.y = posY;
       }
     }
   });
@@ -77,19 +98,20 @@ const move = (key) => {
   switch (key) {
     case "ArrowUp":
       console.log("Arriba");
-      if(playerPosition.y>elementsSize)playerPosition.y -= elementsSize;
+      if (playerPosition.y > elementsSize) playerPosition.y -= elementsSize;
       break;
     case "ArrowLeft":
       console.log("Izquierda");
-      if(playerPosition.x>2*elementsSize)playerPosition.x -= elementsSize;
+      if (playerPosition.x > 2 * elementsSize) playerPosition.x -= elementsSize;
       break;
     case "ArrowRight":
       console.log("Derecha");
-      if(playerPosition.x<canvasSize)playerPosition.x += elementsSize;
+      if (playerPosition.x < canvasSize) playerPosition.x += elementsSize;
       break;
     case "ArrowDown":
       console.log("Abajo");
-      if(playerPosition.y<canvasSize-elementsSize)playerPosition.y += elementsSize;
+      if (playerPosition.y < canvasSize - elementsSize)
+        playerPosition.y += elementsSize;
       break;
 
     default:
