@@ -1,10 +1,15 @@
 const canvas = document.querySelector("#game");
 const game = canvas.getContext("2d");
+const spanLives = document.querySelector("#lives");
+const spanTime = document.querySelector("#time");
 let canvasSize;
 let elementsSize;
 let flag = true;
 let level = 0;
 let lives = 3;
+let timeStart;
+let timePlayer;
+let timeInterval;
 const playerPosition = {
   x: undefined,
   y: undefined,
@@ -16,8 +21,19 @@ const giftPosition = {
 };
 let bombasPosition = [];
 let mapRows = [];
+const showLives = () => {
+  const heartsArray = Array(lives).fill(emojis["HEART"]);
+  spanLives.innerHTML = heartsArray.reduce(
+    (string, heart) => (string += heart)
+  );
+};
+
+const showTime = () => {
+  spanTime.innerHTML=Date.now()- timeStart;
+};
 
 const movePlayer = () => {
+  showLives();
   game.clearRect(0, 0, canvasSize, canvasSize);
   drawMap();
   game.fillText(emojis["PLAYER"], playerPosition.x, playerPosition.y);
@@ -42,8 +58,8 @@ const movePlayer = () => {
   }
 };
 
-const levelFail = () => {+
-  console.log("Chocaste");
+const levelFail = () => {
+  +console.log("Chocaste");
   lives--;
   console.log(lives);
   playerPosition.x = undefined;
@@ -51,20 +67,22 @@ const levelFail = () => {+
   if (lives <= 0) {
     level = 0;
     clearGame();
-    lives=3;
+    clearInterval(timeInterval);
+    timeStart=undefined;
+    lives = 3;
     console.log("Perdiste");
   }
   startGame();
 };
 
-const clearGame= ()=>{
+const clearGame = () => {
   playerPosition.x = undefined;
   playerPosition.y = undefined;
   giftPosition.x = undefined;
   giftPosition.y = undefined;
   flag = true;
   bombasPosition = [];
-}
+};
 
 const levelWin = () => {
   console.log("nuevo nivel");
@@ -121,6 +139,11 @@ const startGame = () => {
     gameWin();
     return;
   }
+
+  if (!timeStart) {
+    timeStart = Date.now();
+    timeInterval= setInterval(showTime,100);
+  }
   movePlayer();
 
   // row.forEach((col, colIndex) => {
@@ -146,6 +169,7 @@ const startGame = () => {
 
 const gameWin = () => {
   console.log("Terminaste el Juego");
+  clearInterval(timeInterval);
 };
 const move = (key) => {
   if (typeof key === "object") {
