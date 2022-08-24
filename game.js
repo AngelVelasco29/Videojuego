@@ -2,6 +2,12 @@ const canvas = document.querySelector("#game");
 const game = canvas.getContext("2d");
 let canvasSize;
 let elementsSize;
+let flag = true;
+let level = 0;
+const initialPosition = {
+  x: undefined,
+  y: undefined,
+};
 const playerPosition = {
   x: undefined,
   y: undefined,
@@ -11,6 +17,7 @@ const giftPosition = {
   x: undefined,
   y: undefined,
 };
+let bombasPosition = [];
 let mapRows = [];
 
 const movePlayer = () => {
@@ -24,10 +31,40 @@ const movePlayer = () => {
   const giftColision = playerPosition.x
     ? giftColisionX && giftColisionY
     : false;
-  console.log(giftColision);
   if (giftColision) {
-    console.log("nuevo nivel");
+    levelWin();
   }
+
+  const bombaColision = bombasPosition.find((position) => {
+    const bombaColisionX = playerPosition.x.toFixed(3) == position.x.toFixed(3);
+    const bombaColisionY = playerPosition.y.toFixed(3) == position.y.toFixed(3);
+    return playerPosition.x ? bombaColisionX && bombaColisionY : false;
+  });
+  console.log("colision", bombaColision);
+  console.log(bombasPosition);
+  if (bombaColision){
+    gameLose();
+  };
+};
+
+const gameLose=()=>{
+  playerPosition.x=initialPosition.x;
+  playerPosition.y=initialPosition.y;
+  game.clearRect(0, 0, canvasSize, canvasSize);
+  drawMap();
+  game.fillText(emojis["PLAYER"], playerPosition.x, playerPosition.y);
+}
+
+const levelWin = () => {
+  console.log("nuevo nivel");
+  level++;
+  playerPosition.x = undefined;
+  playerPosition.y = undefined;
+  giftPosition.x = undefined;
+  giftPosition.y = undefined;
+  flag = true;
+  bombasPosition = [];
+  startGame();
 };
 
 const drawMap = () => {
@@ -39,6 +76,8 @@ const drawMap = () => {
       game.fillText(emoji, posX, posY);
 
       if (row[col] == "O" && !playerPosition.x) {
+        initialPosition.x = posX;
+        initialPosition.y = posY;
         playerPosition.x = posX;
         playerPosition.y = posY;
       }
@@ -46,8 +85,15 @@ const drawMap = () => {
         giftPosition.x = posX;
         giftPosition.y = posY;
       }
+      if (row[col] == "X" && flag) {
+        bombasPosition.push({
+          x: posX,
+          y: posY,
+        });
+      }
     }
   });
+  flag = false;
 };
 
 const startGame = () => {
@@ -60,14 +106,17 @@ const startGame = () => {
   canvas.setAttribute("width", canvasSize);
   canvas.setAttribute("height", canvasSize);
 
-  console.log(canvasSize, elementsSize);
   game.font = elementsSize - 10 + "px Verdana";
   game.textAlign = "end";
   // const mapRowCols = mapRows.map((row) => row.split(""));
   // console.log(mapRows);
   // console.log(mapRowCols);
 
-  mapRows = maps[0];
+  mapRows = maps[level];
+  if (!mapRows) {
+    gameWin();
+    return;
+  }
   movePlayer();
 
   // row.forEach((col, colIndex) => {
@@ -91,6 +140,9 @@ const startGame = () => {
   // game.fillText('Platzi',0,25)
 };
 
+const gameWin = () => {
+  console.log("Terminaste el Juego");
+};
 const move = (key) => {
   if (typeof key === "object") {
     key = key.key;
