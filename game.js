@@ -4,10 +4,7 @@ let canvasSize;
 let elementsSize;
 let flag = true;
 let level = 0;
-const initialPosition = {
-  x: undefined,
-  y: undefined,
-};
+let lives = 3;
 const playerPosition = {
   x: undefined,
   y: undefined,
@@ -40,30 +37,39 @@ const movePlayer = () => {
     const bombaColisionY = playerPosition.y.toFixed(3) == position.y.toFixed(3);
     return playerPosition.x ? bombaColisionX && bombaColisionY : false;
   });
-  console.log("colision", bombaColision);
-  console.log(bombasPosition);
-  if (bombaColision){
-    gameLose();
-  };
+  if (bombaColision) {
+    levelFail();
+  }
 };
 
-const gameLose=()=>{
-  playerPosition.x=initialPosition.x;
-  playerPosition.y=initialPosition.y;
-  game.clearRect(0, 0, canvasSize, canvasSize);
-  drawMap();
-  game.fillText(emojis["PLAYER"], playerPosition.x, playerPosition.y);
-}
+const levelFail = () => {+
+  console.log("Chocaste");
+  lives--;
+  console.log(lives);
+  playerPosition.x = undefined;
+  playerPosition.y = undefined;
+  if (lives <= 0) {
+    level = 0;
+    clearGame();
+    lives=3;
+    console.log("Perdiste");
+  }
+  startGame();
+};
 
-const levelWin = () => {
-  console.log("nuevo nivel");
-  level++;
+const clearGame= ()=>{
   playerPosition.x = undefined;
   playerPosition.y = undefined;
   giftPosition.x = undefined;
   giftPosition.y = undefined;
   flag = true;
   bombasPosition = [];
+}
+
+const levelWin = () => {
+  console.log("nuevo nivel");
+  level++;
+  clearGame();
   startGame();
 };
 
@@ -76,8 +82,6 @@ const drawMap = () => {
       game.fillText(emoji, posX, posY);
 
       if (row[col] == "O" && !playerPosition.x) {
-        initialPosition.x = posX;
-        initialPosition.y = posY;
         playerPosition.x = posX;
         playerPosition.y = posY;
       }
