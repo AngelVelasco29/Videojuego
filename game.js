@@ -7,7 +7,7 @@ const pResult = document.querySelector("#result");
 let canvasSize;
 let elementsSize;
 let flag = true;
-let level = maps.length - 1;
+let level = 0;
 let lives = 3;
 let timeStart;
 let timePlayer;
