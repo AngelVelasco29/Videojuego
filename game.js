@@ -70,14 +70,14 @@ const levelWin = () => {
 
 const setCanvasSize = () => {
   if (window.innerHeight > window.innerWidth) {
-    if ((window, innerWidth < 350)) {
-      canvasSize = 350;
+    if ((window, innerWidth < 450)) {
+      canvasSize = 400;
     } else {
       canvasSize = (window.innerWidth * 0.75).toFixed(0);
     }
   } else {
-    if (window.innerHeight < 350) {
-      canvasSize = 350;
+    if (window.innerHeight < 450) {
+      canvasSize = 400;
     } else {
       canvasSize = (window.innerHeight * 0.75).toFixed(0);
     }
