@@ -2,73 +2,50 @@ const canvas = document.querySelector("#game");
 const game = canvas.getContext("2d");
 const spanLives = document.querySelector("#lives");
 const spanTime = document.querySelector("#time");
+const spanRecord = document.querySelector("#record");
+const pResult = document.querySelector("#result");
 let canvasSize;
 let elementsSize;
 let flag = true;
-let level = 0;
+let level = maps.length - 1;
 let lives = 3;
 let timeStart;
 let timePlayer;
 let timeInterval;
 const playerPosition = {
-  x: undefined,
-  y: undefined,
+  col: undefined,
+  row: undefined,
 };
-
+const doorPosition = {
+  col: undefined,
+  row: undefined,
+};
 const giftPosition = {
-  x: undefined,
-  y: undefined,
+  col: undefined,
+  row: undefined,
 };
 let bombasPosition = [];
 let mapRows = [];
-const showLives = () => {
-  const heartsArray = Array(lives).fill(emojis["HEART"]);
-  spanLives.innerHTML = heartsArray.reduce(
-    (string, heart) => (string += heart)
-  );
+
+const showRecord = () => {
+  spanRecord.innerHTML = localStorage.getItem("record_time");
 };
 
 const showTime = () => {
-  spanTime.innerHTML=Date.now()- timeStart;
-};
-
-const movePlayer = () => {
-  showLives();
-  game.clearRect(0, 0, canvasSize, canvasSize);
-  drawMap();
-  game.fillText(emojis["PLAYER"], playerPosition.x, playerPosition.y);
-  const giftColisionX =
-    playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);
-  const giftColisionY =
-    playerPosition.y.toFixed(3) == giftPosition.y.toFixed(3);
-  const giftColision = playerPosition.x
-    ? giftColisionX && giftColisionY
-    : false;
-  if (giftColision) {
-    levelWin();
-  }
-
-  const bombaColision = bombasPosition.find((position) => {
-    const bombaColisionX = playerPosition.x.toFixed(3) == position.x.toFixed(3);
-    const bombaColisionY = playerPosition.y.toFixed(3) == position.y.toFixed(3);
-    return playerPosition.x ? bombaColisionX && bombaColisionY : false;
-  });
-  if (bombaColision) {
-    levelFail();
-  }
+  spanTime.innerHTML = Date.now() - timeStart;
 };
 
 const levelFail = () => {
-  +console.log("Chocaste");
+  console.log("Chocaste");
   lives--;
   console.log(lives);
-  playerPosition.x = undefined;
-  playerPosition.y = undefined;
+  playerPosition.col = undefined;
+  playerPosition.col = undefined;
   if (lives <= 0) {
     level = 0;
     clearGame();
     clearInterval(timeInterval);
-    timeStart=undefined;
+    timeStart = undefined;
     lives = 3;
     console.log("Perdiste");
   }
@@ -76,12 +53,12 @@ const levelFail = () => {
 };
 
 const clearGame = () => {
-  playerPosition.x = undefined;
-  playerPosition.y = undefined;
-  giftPosition.x = undefined;
-  giftPosition.y = undefined;
-  flag = true;
+  playerPosition.col = undefined;
+  playerPosition.row = undefined;
+  giftPosition.col = undefined;
+  giftPosition.row = undefined;
   bombasPosition = [];
+  flag = true;
 };
 
 const levelWin = () => {
@@ -91,85 +68,152 @@ const levelWin = () => {
   startGame();
 };
 
-const drawMap = () => {
-  mapRows.forEach((row, rowIndex) => {
-    for (let col = 0; col < row.length; col++) {
-      const emoji = emojis[row[col]];
-      const posX = elementsSize * (col + 1) + 5;
-      const posY = elementsSize * (rowIndex + 1) - 10;
-      game.fillText(emoji, posX, posY);
-
-      if (row[col] == "O" && !playerPosition.x) {
-        playerPosition.x = posX;
-        playerPosition.y = posY;
-      }
-      if (row[col] == "I" && !giftPosition.x) {
-        giftPosition.x = posX;
-        giftPosition.y = posY;
-      }
-      if (row[col] == "X" && flag) {
-        bombasPosition.push({
-          x: posX,
-          y: posY,
-        });
-      }
-    }
-  });
-  flag = false;
-};
-
-const startGame = () => {
+const setCanvasSize = () => {
   if (window.innerHeight > window.innerWidth) {
-    canvasSize = window.innerWidth * 0.8;
+    if ((window, innerWidth < 350)) {
+      canvasSize = 350;
+    } else {
+      canvasSize = (window.innerWidth * 0.75).toFixed(0);
+    }
   } else {
-    canvasSize = window.innerHeight * 0.8;
+    if (window.innerHeight < 350) {
+      canvasSize = 350;
+    } else {
+      canvasSize = (window.innerHeight * 0.75).toFixed(0);
+    }
   }
-  elementsSize = canvasSize / 10;
+  elementsSize = canvasSize / maps[level].length;
   canvas.setAttribute("width", canvasSize);
   canvas.setAttribute("height", canvasSize);
 
   game.font = elementsSize - 10 + "px Verdana";
   game.textAlign = "end";
-  // const mapRowCols = mapRows.map((row) => row.split(""));
-  // console.log(mapRows);
-  // console.log(mapRowCols);
+  drawMap();
+  drawPlayer();
+};
 
+const showLives = () => {
+  const heartsArray = Array(lives).fill(emojis["HEART"]);
+  spanLives.innerHTML = heartsArray.join("");
+};
+
+const drawBombs = () => {
+  bombasPosition.forEach((bomb) => {
+    game.fillText(
+      emojis["X"],
+      bomb.col * elementsSize + 5,
+      bomb.row * elementsSize - 10
+    );
+  });
+};
+
+const drawDoor = () => {
+  game.fillText(
+    emojis["O"],
+    doorPosition.col * elementsSize + 5,
+    doorPosition.row * elementsSize - 10
+  );
+};
+
+const drawGift = () => {
+  game.fillText(
+    emojis["I"],
+    giftPosition.col * elementsSize + 5,
+    giftPosition.row * elementsSize - 10
+  );
+};
+
+const drawPlayer = () => {
+  game.fillText(
+    emojis["PLAYER"],
+    playerPosition.col * elementsSize + 5,
+    playerPosition.row * elementsSize - 10
+  );
+};
+
+const drawMap = () => {
+  mapRows.forEach((row, rowIndex) => {
+    for (let col = 0; col < row.length; col++) {
+      if (row[col] == "O" && !playerPosition.col) {
+        doorPosition.col = col + 1;
+        doorPosition.row = rowIndex + 1;
+        playerPosition.col = col + 1;
+        playerPosition.row = rowIndex + 1;
+      }
+      if (row[col] == "I" && !giftPosition.col) {
+        giftPosition.col = col + 1;
+        giftPosition.row = rowIndex + 1;
+      }
+      if (row[col] == "X" && flag) {
+        bombasPosition.push({
+          col: col + 1,
+          row: rowIndex + 1,
+        });
+      }
+    }
+  });
+  drawBombs();
+  drawDoor();
+  drawGift();
+  flag = false;
+};
+
+const movePlayer = () => {
+  showLives();
+  game.clearRect(0, 0, canvasSize, canvasSize);
+  drawMap();
+  drawPlayer();
+  const giftColisionX = playerPosition.col == giftPosition.col;
+  const giftColisionY = playerPosition.row == giftPosition.row;
+  const giftColision = giftColisionX && giftColisionY;
+
+  if (giftColision) {
+    levelWin();
+  }
+
+  const bombaColision = bombasPosition.find((position) => {
+    const bombaColisionX = playerPosition.col == position.col;
+    const bombaColisionY = playerPosition.row == position.row;
+    return bombaColisionX && bombaColisionY;
+  });
+  if (bombaColision) {
+    levelFail();
+  }
+};
+
+const startGame = () => {
   mapRows = maps[level];
   if (!mapRows) {
     gameWin();
     return;
   }
-
+  setCanvasSize();
   if (!timeStart) {
     timeStart = Date.now();
-    timeInterval= setInterval(showTime,100);
+    timeInterval = setInterval(showTime, 100);
+    showRecord();
   }
+
   movePlayer();
-
-  // row.forEach((col, colIndex) => {
-  //   const emoji = emojis[col];
-  //   const posX = elementsSize * (colIndex + 1) + 5;
-  //   const posY = elementsSize * (rowIndex + 1) - 10;
-  //   game.fillText(emoji, posX, posY);
-  // });
-
-  // for (let row = 1; row <= 10; row++) {
-  //   for (let col = 1; col <= 10; col++) {
-  //     game.fillText(emojis[mapRowCols[row-1][col-1]], elementsSize * col+5, elementsSize * row-10);
-  //   }
-  // }
-
-  // game.fillRect(0, 0, 100, 100);
-  // game.clearRect(50,50,50,50);
-  // game.font = '25px Verdana'
-  // game.fillStyle = 'purple'
-  // game.textAlign= 'center'
-  // game.fillText('Platzi',0,25)
 };
 
 const gameWin = () => {
   console.log("Terminaste el Juego");
   clearInterval(timeInterval);
+
+  const recordTime = localStorage.getItem("record_time");
+  const playerTime = Date.now() - timeStart;
+  if (recordTime) {
+    if (recordTime >= playerTime) {
+      localStorage.setItem("record_time", playerTime);
+      pResult.innerHTML = "superaste el record";
+    } else {
+      pResult.innerHTML = "No superaste el Record";
+    }
+  } else {
+    localStorage.setItem("record_time", playerTime);
+    pResult.innerHTML = "Este es el primer Record";
+  }
 };
 const move = (key) => {
   if (typeof key === "object") {
@@ -177,21 +221,16 @@ const move = (key) => {
   }
   switch (key) {
     case "ArrowUp":
-      console.log("Arriba");
-      if (playerPosition.y > elementsSize) playerPosition.y -= elementsSize;
+      if (playerPosition.row > 1) playerPosition.row -= 1;
       break;
     case "ArrowLeft":
-      console.log("Izquierda");
-      if (playerPosition.x > 2 * elementsSize) playerPosition.x -= elementsSize;
+      if (playerPosition.col > 1) playerPosition.col -= 1;
       break;
     case "ArrowRight":
-      console.log("Derecha");
-      if (playerPosition.x < canvasSize) playerPosition.x += elementsSize;
+      if (playerPosition.col < maps[level].length) playerPosition.col += 1;
       break;
     case "ArrowDown":
-      console.log("Abajo");
-      if (playerPosition.y < canvasSize - elementsSize)
-        playerPosition.y += elementsSize;
+      if (playerPosition.row < maps[level].length) playerPosition.row += 1;
       break;
 
     default:
@@ -202,3 +241,4 @@ const move = (key) => {
 
 window.addEventListener("keydown", move);
 window.addEventListener("load", startGame);
+window.addEventListener("resize", setCanvasSize);
