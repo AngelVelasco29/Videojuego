@@ -308,6 +308,7 @@ const records = async () => {
 const postTime = async () => {
   localStorage.setItem("name", namePlayer.value);
   localStorage.setItem("country", country.value);
+  buttonTime.disabled=true;
   const datos = {
     name: namePlayer.value,
     country: country.value,
