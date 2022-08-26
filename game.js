@@ -1,17 +1,29 @@
 const canvas = document.querySelector("#game");
 const game = canvas.getContext("2d");
+const gameContainer = document.querySelector(".game-container");
+const lobby = document.querySelector(".lobby");
+const tableGrid = document.querySelector(".table-grid");
+const loser = document.querySelector(".loser");
+const win = document.querySelector(".win");
 const spanLives = document.querySelector("#lives");
 const spanTime = document.querySelector("#time");
 const spanRecord = document.querySelector("#record");
 const pResult = document.querySelector("#result");
+const buttonTime= document.querySelector("#buttonTime");
+const resultGame = document.querySelector("#resultGame");
+const namePlayer = document.querySelector("#name");
+const country = document.querySelector("#country");
+const API = "https://6307f66d46372013f5748481.mockapi.io/api/v1/player";
+
 let canvasSize;
 let elementsSize;
 let flag = true;
-let level = 0;
+let level = 9;
 let lives = 3;
 let timeStart;
 let timePlayer;
 let timeInterval;
+let recordsJSON;
 const playerPosition = {
   col: undefined,
   row: undefined,
@@ -26,6 +38,28 @@ const giftPosition = {
 };
 let bombasPosition = [];
 let mapRows = [];
+
+const fetchData = async () => {
+  const result = await fetch(API);
+  const data = await result.json();
+  return data;
+};
+
+const postData = async (datos) => {
+  const result = await fetch(API, {
+    method: "POST",
+    body: JSON.stringify(datos),
+    headers: { "Content-type": "application/json" },
+  });
+};
+
+const putData = async (datos) => {
+  const result = await fetch(`${API}/${datos.id}`, {
+    method: "PUT",
+    body: JSON.stringify(datos),
+    headers: { "Content-type": "application/json" },
+  });
+};
 
 const showRecord = () => {
   spanRecord.innerHTML = localStorage.getItem("record_time");
@@ -47,7 +81,9 @@ const levelFail = () => {
     clearInterval(timeInterval);
     timeStart = undefined;
     lives = 3;
-    console.log("Perdiste");
+    loser.classList.remove("display-none");
+    gameContainer.classList.add("display-none");
+    return;
   }
   startGame();
 };
@@ -182,6 +218,9 @@ const movePlayer = () => {
 };
 
 const startGame = () => {
+  gameContainer.classList.remove("display-none");
+  lobby.classList.add("display-none");
+  window.addEventListener("keydown", move);
   mapRows = maps[level];
   if (!mapRows) {
     gameWin();
@@ -200,45 +239,100 @@ const startGame = () => {
 const gameWin = () => {
   console.log("Terminaste el Juego");
   clearInterval(timeInterval);
+  win.classList.remove("display-none");
+  gameContainer.classList.add("display-none");
+
+  namePlayer.value = localStorage.getItem("name");
+  country.value = localStorage.getItem("country");
 
   const recordTime = localStorage.getItem("record_time");
-  const playerTime = Date.now() - timeStart;
+  timePlayer = Date.now() - timeStart;
   if (recordTime) {
-    if (recordTime >= playerTime) {
-      localStorage.setItem("record_time", playerTime);
+    if (recordTime > timePlayer) {
+      localStorage.setItem("record_time", timePlayer);
       pResult.innerHTML = "superaste el record";
+      resultGame.innerHTML="Superaste tu record";
     } else {
       pResult.innerHTML = "No superaste el Record";
+      resultGame.innerHTML="No superaste tu record";
+      buttonTime.innerHTML= "Volver a intentar";
     }
   } else {
-    localStorage.setItem("record_time", playerTime);
+    localStorage.setItem("record_time", timePlayer);
     pResult.innerHTML = "Este es el primer Record";
+    resultGame.innerHTML="Has creado tu primer record";
+
   }
 };
 const move = (key) => {
-  if (typeof key === "object") {
-    key = key.key;
-  }
-  switch (key) {
-    case "ArrowUp":
-      if (playerPosition.row > 1) playerPosition.row -= 1;
-      break;
-    case "ArrowLeft":
-      if (playerPosition.col > 1) playerPosition.col -= 1;
-      break;
-    case "ArrowRight":
-      if (playerPosition.col < maps[level].length) playerPosition.col += 1;
-      break;
-    case "ArrowDown":
-      if (playerPosition.row < maps[level].length) playerPosition.row += 1;
-      break;
+  if (!gameContainer.classList.contains("display-none")) {
+    if (typeof key === "object") {
+      key = key.key;
+    }
+    switch (key) {
+      case "ArrowUp":
+        if (playerPosition.row > 1) playerPosition.row -= 1;
+        break;
+      case "ArrowLeft":
+        if (playerPosition.col > 1) playerPosition.col -= 1;
+        break;
+      case "ArrowRight":
+        if (playerPosition.col < maps[level].length) playerPosition.col += 1;
+        break;
+      case "ArrowDown":
+        if (playerPosition.row < maps[level].length) playerPosition.row += 1;
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
+
+    movePlayer();
   }
-  movePlayer();
 };
 
-window.addEventListener("keydown", move);
-window.addEventListener("load", startGame);
+const records = async () => {
+  recordsJSON = await fetchData();
+  recordsJSON.sort((a, b) => {
+    return a.time - b.time;
+  });
+
+  recordsJSON.map((record, index) => {
+    tableGrid.innerHTML += `<div>${index + 1}</div>
+    <div>${record.name}</div>
+    <div>${record.country}</div>
+    <div>${record.time}</div>`;
+  });
+};
+
+const postTime = async () => {
+  localStorage.setItem("name", namePlayer.value);
+  localStorage.setItem("country", country.value);
+  const datos = {
+    name: namePlayer.value,
+    country: country.value,
+    time: timePlayer,
+  };
+
+  const recordFind = recordsJSON.find((record) => {
+    return namePlayer.value == record.name && country.value == record.country;
+  });
+
+  if (recordFind) {
+    if(recordFind.time>=timePlayer){
+      recordFind.time = timePlayer;
+      await putData(recordFind);
+    }
+    reload();
+  } else {
+    await postData(datos);
+    reload();
+  }
+};
+
+const reload = () => {
+  location.reload();
+};
+
+window.addEventListener("load", records);
 window.addEventListener("resize", setCanvasSize);

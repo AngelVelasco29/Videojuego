@@ -10,10 +10,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
     height: 100vh;
     width: 100vw;
 }
+
+
 
 canvas {
     border: 4px solid #ff6600;
@@ -37,6 +39,12 @@ button {
     margin: 0;
     padding: 5px 20px;
     width: 100px;
+    height: 50px;
+}
+
+
+.fa-solid {
+    margin: 10px 20px;
 }
 
 button:not(:last-child) {
@@ -55,6 +63,85 @@ p {
     display: block;
     margin: 0;
     width: 100%;
+}
+
+.lobby {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.button-start{
+    width: 300px;
+    font-weight: bold;
+    
+}
+
+.lobby h1,
+.lobby h2 {
+    text-align: center;
+}
+
+.table-grid {
+    width: 90%;
+    max-width: 800px;
+    min-width: 300px;
+    display: grid;
+    grid-template-columns: 1fr 3fr 2fr 2fr;
+    grid-auto-rows: 20px;
+    margin: 0 auto;
+    justify-items: center;
+    gap: 8px;
+}
+
+.table-grid div {
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+}
+
+
+
+.loser{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.loser p{
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.loser button{
+    width: 300px;
+    font-weight: bold;
+}
+
+.win{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.win p{
+    font-size: 3rem;
+}
+.win h2{
+    margin-bottom: 30px;
+}
+
+.win button{
+    width: 300px;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.display-none {
+    display: none;
 }
 
 @media (max-width: 440px) {

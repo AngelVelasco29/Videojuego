@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Platzriv - Juegioto online de carreras y calaveras</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/d9eacc821b.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="game-container">
+    <div class="game-container display-none">
         <canvas id="game"></canvas>
         <div class="btns">
-            <button id="up" onclick= "move('ArrowUp')">Arriba</button>
-            <button id="left" onclick="move('ArrowLeft')">Izquierda</button>
-            <button id="right" onclick="move('ArrowRight')">Derecha</button>
-            <button id="down" onclick="move('ArrowDown')">Abajo</button>
+            <button id="up" onclick= "move('ArrowUp')"><i class="fa-solid fa-arrow-up"></i></button>
+            <button id="left" onclick="move('ArrowLeft')"><i class="fa-solid fa-arrow-left"></i></button>
+            <button id="right" onclick="move('ArrowRight')"><i class="fa-solid fa-arrow-right"></i></button>
+            <button id="down" onclick="move('ArrowDown')"><i class="fa-solid fa-arrow-down"></i></button>
         </div>
         <div class="messages">
             <p>Vidas: <span id="lives"></span></p>
@@ -22,6 +23,36 @@
             <p>Record: <span id="record"></span></p>
             <p id="result"></p>
         </div>
+    </div>
+    <div class="lobby">
+        <h1>Se el mas rápido en resolver los laberintos.</h1>
+        <button class="button-start" onclick="startGame()">Empezar Juego!</button>
+        <h2>Records</h2>
+        <div class="table-grid">
+            <div>Posición</div>
+            <div>Nombre</div>
+            <div>Pais</div>
+            <div>Tiempo</div>
+        </div>
+    </div>
+    <div class="loser display-none">
+        <h2>¡Perdiste!</h2>
+        <p>😫</p>
+        <button onclick="reload()">Volver a intentar</button>
+    </div>
+
+    <div class="win display-none">
+        <h1>Felicidades Ganaste</h1>
+        <p>🏆</p>
+        <h2>Subir tu record</h2>
+        <label>Nombre:
+            <input type="text" id="name">
+        </label>
+        <label>País:
+            <input type="text" id="country">
+        </label>
+        <p id="resultGame"></p>
+        <button id="buttonTime" onclick="postTime()">Subir Tiempo</button>
     </div>
     <script src="./maps.js"></script>
     <script src="./game.js"></script>
