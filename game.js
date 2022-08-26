@@ -18,7 +18,7 @@ const API = "https://6307f66d46372013f5748481.mockapi.io/api/v1/player";
 let canvasSize;
 let elementsSize;
 let flag = true;
-let level = 9;
+let level = 0;
 let lives = 3;
 let timeStart;
 let timePlayer;
