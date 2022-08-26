@@ -8,7 +8,6 @@ const win = document.querySelector(".win");
 const spanLives = document.querySelector("#lives");
 const spanTime = document.querySelector("#time");
 const spanRecord = document.querySelector("#record");
-const pResult = document.querySelector("#result");
 const buttonTime= document.querySelector("#buttonTime");
 const resultGame = document.querySelector("#resultGame");
 const namePlayer = document.querySelector("#name");
@@ -66,7 +65,7 @@ const showRecord = () => {
 };
 
 const showTime = () => {
-  spanTime.innerHTML = Date.now() - timeStart;
+  spanTime.innerHTML = (Date.now() - timeStart)/1000 +"s";
 };
 
 const levelFail = () => {
@@ -246,20 +245,17 @@ const gameWin = () => {
   country.value = localStorage.getItem("country");
 
   const recordTime = localStorage.getItem("record_time");
-  timePlayer = Date.now() - timeStart;
+  timePlayer = (Date.now() - timeStart)/1000;
   if (recordTime) {
     if (recordTime > timePlayer) {
       localStorage.setItem("record_time", timePlayer);
-      pResult.innerHTML = "superaste el record";
       resultGame.innerHTML="Superaste tu record";
     } else {
-      pResult.innerHTML = "No superaste el Record";
       resultGame.innerHTML="No superaste tu record";
       buttonTime.innerHTML= "Volver a intentar";
     }
   } else {
     localStorage.setItem("record_time", timePlayer);
-    pResult.innerHTML = "Este es el primer Record";
     resultGame.innerHTML="Has creado tu primer record";
 
   }

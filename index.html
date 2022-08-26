@@ -10,18 +10,23 @@
 </head>
 <body>
     <div class="game-container display-none">
+        <div class="messages">
+            <div>
+                <span id="lives"></span>
+            </div>
+            <div>
+                 <span>⏰</span><span id="time"></span>
+            </div>
+            <div>
+                <span>Record: </span><span id="record"></span>
+            </div>
+        </div>
         <canvas id="game"></canvas>
         <div class="btns">
             <button id="up" onclick= "move('ArrowUp')"><i class="fa-solid fa-arrow-up"></i></button>
             <button id="left" onclick="move('ArrowLeft')"><i class="fa-solid fa-arrow-left"></i></button>
             <button id="right" onclick="move('ArrowRight')"><i class="fa-solid fa-arrow-right"></i></button>
             <button id="down" onclick="move('ArrowDown')"><i class="fa-solid fa-arrow-down"></i></button>
-        </div>
-        <div class="messages">
-            <p>Vidas: <span id="lives"></span></p>
-            <p>Tiempo: ⏰ <span id="time"></span> </p>
-            <p>Record: <span id="record"></span></p>
-            <p id="result"></p>
         </div>
     </div>
     <div class="lobby">
@@ -32,7 +37,7 @@
             <div>Posición</div>
             <div>Nombre</div>
             <div>Pais</div>
-            <div>Tiempo</div>
+            <div>Tiempo s</div>
         </div>
     </div>
     <div class="loser display-none">
