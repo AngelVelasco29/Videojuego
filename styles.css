@@ -9,10 +9,10 @@ body {
 .game-container {
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
     height: 100vh;
     width: 100vw;
+    margin-top: 20px;
 }
 
 
@@ -40,15 +40,16 @@ button {
     padding: 5px 20px;
     width: 100px;
     height: 50px;
+    margin-top: 0;
 }
 
 
 .fa-solid {
-    margin: 10px 20px;
+    margin: 0px 20px;
 }
 
 button:not(:last-child) {
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .messages {
