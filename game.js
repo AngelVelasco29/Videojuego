@@ -23,6 +23,10 @@ let timeStart;
 let timePlayer;
 let timeInterval;
 let recordsJSON;
+let firePosition={
+  col: undefined,
+  row: undefined,
+}
 const playerPosition = {
   col: undefined,
   row: undefined,
@@ -121,8 +125,8 @@ const setCanvasSize = () => {
   canvas.setAttribute("width", canvasSize);
   canvas.setAttribute("height", canvasSize);
 
-  game.font = elementsSize - 10 + "px Verdana";
-  game.textAlign = "end";
+  game.font = elementsSize - 7 + "px Verdana";
+  game.textAlign = "start";
   drawMap();
   drawPlayer();
 };
@@ -136,7 +140,7 @@ const drawBombs = () => {
   bombasPosition.forEach((bomb) => {
     game.fillText(
       emojis["X"],
-      bomb.col * elementsSize + 5,
+      bomb.col * elementsSize- 2,
       bomb.row * elementsSize - 10
     );
   });
@@ -145,24 +149,31 @@ const drawBombs = () => {
 const drawDoor = () => {
   game.fillText(
     emojis["O"],
-    doorPosition.col * elementsSize + 5,
-    doorPosition.row * elementsSize - 10
+    doorPosition.col * elementsSize,
+    doorPosition.row * elementsSize-5,
   );
 };
 
 const drawGift = () => {
   game.fillText(
     emojis["I"],
-    giftPosition.col * elementsSize + 5,
+    giftPosition.col * elementsSize,
     giftPosition.row * elementsSize - 10
+  );
+};
+const drawFire = () => {
+  game.fillText(
+    emojis["BOMB_COLLISION"],
+    firePosition.col * elementsSize,
+    firePosition.row * elementsSize - 10
   );
 };
 
 const drawPlayer = () => {
   game.fillText(
     emojis["PLAYER"],
-    playerPosition.col * elementsSize + 5,
-    playerPosition.row * elementsSize - 10
+    playerPosition.col * elementsSize-5,
+    playerPosition.row * elementsSize - 5
   );
 };
 
@@ -170,24 +181,25 @@ const drawMap = () => {
   mapRows.forEach((row, rowIndex) => {
     for (let col = 0; col < row.length; col++) {
       if (row[col] == "O" && !playerPosition.col) {
-        doorPosition.col = col + 1;
-        doorPosition.row = rowIndex + 1;
-        playerPosition.col = col + 1;
-        playerPosition.row = rowIndex + 1;
+        doorPosition.col = col;
+        doorPosition.row = rowIndex+1;
+        playerPosition.col = col;
+        playerPosition.row = rowIndex+1;
       }
       if (row[col] == "I" && !giftPosition.col) {
-        giftPosition.col = col + 1;
-        giftPosition.row = rowIndex + 1;
+        giftPosition.col = col;
+        giftPosition.row = rowIndex+1;
       }
       if (row[col] == "X" && flag) {
         bombasPosition.push({
-          col: col + 1,
-          row: rowIndex + 1,
+          col: col,
+          row: rowIndex+1,
         });
       }
     }
   });
   drawBombs();
+  drawFire();
   drawDoor();
   drawGift();
   flag = false;
@@ -212,6 +224,7 @@ const movePlayer = () => {
     return bombaColisionX && bombaColisionY;
   });
   if (bombaColision) {
+    firePosition= bombaColision;
     levelFail();
   }
 };
