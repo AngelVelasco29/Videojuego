@@ -131,6 +131,7 @@ const setCanvasSize = () => {
 
   game.font = elementsSize - 7 + "px Verdana";
   game.textAlign = "start";
+  flag=true;
   drawMap();
   drawPlayer();
 };
