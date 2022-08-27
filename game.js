@@ -103,6 +103,10 @@ const clearGame = () => {
 const levelWin = () => {
   console.log("nuevo nivel");
   level++;
+  firePosition={
+    col: undefined,
+    row: undefined
+  }
   clearGame();
   startGame();
 };
