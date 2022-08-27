@@ -77,7 +77,7 @@ const levelFail = () => {
   lives--;
   console.log(lives);
   playerPosition.col = undefined;
-  playerPosition.col = undefined;
+  playerPosition.row = undefined;
   if (lives <= 0) {
     level = 0;
     clearGame();
