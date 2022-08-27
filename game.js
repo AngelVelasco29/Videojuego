@@ -175,6 +175,7 @@ const drawFire = () => {
 };
 
 const drawPlayer = () => {
+  console.log(playerPosition);
   game.fillText(
     emojis["PLAYER"],
     playerPosition.col * elementsSize-5,
@@ -185,13 +186,13 @@ const drawPlayer = () => {
 const drawMap = () => {
   mapRows.forEach((row, rowIndex) => {
     for (let col = 0; col < row.length; col++) {
-      if (row[col] == "O" && !playerPosition.col) {
+      if (row[col] == "O" && !playerPosition.col && !playerPosition.row) {
         doorPosition.col = col;
         doorPosition.row = rowIndex+1;
         playerPosition.col = col;
         playerPosition.row = rowIndex+1;
       }
-      if (row[col] == "I" && !giftPosition.col) {
+      if (row[col] == "I" && !giftPosition.col && !giftPosition.row) {
         giftPosition.col = col;
         giftPosition.row = rowIndex+1;
       }
@@ -203,6 +204,7 @@ const drawMap = () => {
       }
     }
   });
+  console.log("draw");
   drawBombs();
   drawFire();
   drawDoor();
@@ -220,6 +222,7 @@ const movePlayer = () => {
   const giftColision = giftColisionX && giftColisionY;
 
   if (giftColision) {
+    console.log("win");
     levelWin();
   }
 
@@ -229,6 +232,7 @@ const movePlayer = () => {
     return bombaColisionX && bombaColisionY;
   });
   if (bombaColision) {
+    console.log("lost");
     firePosition= bombaColision;
     levelFail();
   }
@@ -288,10 +292,10 @@ const move = (key) => {
         if (playerPosition.row > 1) playerPosition.row -= 1;
         break;
       case "ArrowLeft":
-        if (playerPosition.col > 1) playerPosition.col -= 1;
+        if (playerPosition.col > 0) playerPosition.col -= 1;
         break;
       case "ArrowRight":
-        if (playerPosition.col < maps[level].length) playerPosition.col += 1;
+        if (playerPosition.col < maps[level].length-1) playerPosition.col += 1;
         break;
       case "ArrowDown":
         if (playerPosition.row < maps[level].length) playerPosition.row += 1;
